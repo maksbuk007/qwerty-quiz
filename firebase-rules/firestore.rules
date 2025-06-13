@@ -1,0 +1,50 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Правила для игр - разрешаем чтение всем, запись только создателям
+    match /games/{gameId} {
+      allow read: if true;
+      allow write: if request.auth != null && 
+        (request.auth.uid == resource.data.createdBy || !exists(/databases/$(database)/documents/games/$(gameId)));
+    }
+    
+    // Правила для игровых сессий - разрешаем всем для гостевого доступа
+    match /gameSessions/{sessionId} {
+      allow read: if true;
+      allow write: if true;
+      
+      match /messages/{messageId} {
+        allow read: if true;
+        allow write: if true;
+      }
+    }
+    
+    // Правила для статистики пользователей
+    match /user_stats/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Правила для достижений
+    match /achievements/{achievementId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Правила для пользовательских достижений
+    match /user_achievements/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Правила для аналитики игр - делаем опциональными
+    match /game_analytics/{gameId} {
+      allow read: if true;
+      allow write: if true; // Разрешаем всем для гостевого доступа
+    }
+    
+    // Правила для аналитики (новая коллекция)
+    match /analytics/{analyticsId} {
+      allow read: if true;
+      allow write: if true; // Разрешаем всем писать аналитику
+    }
+  }
+}

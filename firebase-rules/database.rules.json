@@ -1,0 +1,34 @@
+{
+  "rules": {
+    "games": {
+      "$gameId": {
+        ".read": true,
+        ".write": "auth != null && (data.child('createdBy').val() == auth.uid || !data.exists())"
+      }
+    },
+    "sessions": {
+      "$sessionId": {
+        ".read": true,
+        ".write": true,
+        "players": {
+          "$playerId": {
+            ".read": true,
+            ".write": true
+          }
+        },
+        "chat": {
+          "$messageId": {
+            ".read": true,
+            ".write": "auth != null"
+          }
+        }
+      }
+    },
+    "user_stats": {
+      "$userId": {
+        ".read": "auth != null && auth.uid == $userId",
+        ".write": "auth != null && auth.uid == $userId"
+      }
+    }
+  }
+}
