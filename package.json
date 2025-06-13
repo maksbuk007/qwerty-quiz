@@ -44,5 +44,8 @@
   "resolutions": {
     "@radix-ui/*": "latest",
     "@firebase/*": "latest"
-  }
+  },
+  "engines": {
+  "node": ">=18.17.0"
+}
 }
